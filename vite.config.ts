@@ -1,7 +1,27 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { federation } from "@module-federation/vite";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-})
+  plugins: [
+    react(),
+    federation({
+      name: "module_federate_1",
+      filename: "remoteEntry.js",
+      exposes: {
+        "./App": "./src/App.tsx",
+      },
+      shared: ["react", "react-dom", "react-router-dom"],
+    }),
+  ],
+  server: {
+    port: 5174,
+    origin: "http://localhost:5174",
+  },
+  preview: {
+    port: 5174,
+  },
+  build: {
+    target: "chrome89",
+  },
+});
